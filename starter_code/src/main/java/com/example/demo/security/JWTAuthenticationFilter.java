@@ -30,11 +30,11 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest req,
+    public Authentication attemptAuthentication(HttpServletRequest request,
                                                 HttpServletResponse res) throws AuthenticationException {
         try {
             User credentials = new ObjectMapper()
-                    .readValue(req.getInputStream(), User.class);
+                    .readValue(request.getInputStream(), User.class);
 
 
             return authenticationManager.authenticate(
@@ -49,8 +49,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest req,
-                                            HttpServletResponse res,
+    protected void successfulAuthentication(HttpServletRequest request,
+                                            HttpServletResponse response,
                                             FilterChain chain,
                                             Authentication auth) throws IOException, ServletException {
 
@@ -58,6 +58,6 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .withSubject(((org.springframework.security.core.userdetails.User) auth.getPrincipal()).getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .sign(HMAC512(SECRET.getBytes()));
-        res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
+        response.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
     }
 }

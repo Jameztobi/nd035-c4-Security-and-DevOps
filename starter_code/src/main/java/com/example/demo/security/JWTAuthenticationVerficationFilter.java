@@ -25,23 +25,23 @@ public class JWTAuthenticationVerficationFilter extends BasicAuthenticationFilte
 
 
     @Override
-    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        String header = req.getHeader(SecurityConstants.HEADER_STRING);
+        String header = request.getHeader(SecurityConstants.HEADER_STRING);
 
         if (header == null || !header.startsWith(SecurityConstants.TOKEN_PREFIX)) {
-            chain.doFilter(req, res);
+            chain.doFilter(request, response);
             return;
         }
 
-        UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
+        UsernamePasswordAuthenticationToken authentication = getAuthentication(request);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        chain.doFilter(req, res);
+        chain.doFilter(request, response);
     }
 
-    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest req) {
-        String token = req.getHeader(SecurityConstants.HEADER_STRING);
+    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
+        String token = request.getHeader(SecurityConstants.HEADER_STRING);
         if (token != null) {
             String user = JWT.require(HMAC512(SecurityConstants.SECRET.getBytes())).build()
                     .verify(token.replace(SecurityConstants.TOKEN_PREFIX, ""))
