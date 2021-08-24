@@ -33,9 +33,16 @@ public class OrderController {
 	
 	@PostMapping("/submit/{username}")
 	public ResponseEntity<UserOrder> submit(@PathVariable String username) {
-		User user = userRepository.findByUsername(username);
+		User user = new User();
+		try {
+			 user=userRepository.findByUsername(username);
+		}
+		catch (NullPointerException e){
+			log.error(e.getMessage());
+		}
+
 		if(user == null) {
-			log.error("User name {} is invalid", user.getUsername());
+			log.error("Invalid Order-User name {} is invalid", user.getUsername());
 			return ResponseEntity.notFound().build();
 		}
 		UserOrder order = UserOrder.createFromCart(user.getCart());
