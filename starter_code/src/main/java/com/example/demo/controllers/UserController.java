@@ -51,6 +51,11 @@ public class UserController {
 	
 	@PostMapping("/create")
 	public ResponseEntity<User> createUser(@RequestBody CreateUserRequest createUserRequest) {
+		Optional optionalUser = Optional.of(createUserRequest.getUsername());
+		if (!optionalUser.isPresent()){
+			log.error("username is empty", createUserRequest.getUsername());
+			ResponseEntity.notFound().build();
+		}
 		User user = new User();
 		user.setUsername(createUserRequest.getUsername());
 		log.info("The user has now been set to {}",createUserRequest.getUsername());
