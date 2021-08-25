@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,7 +55,9 @@ public class ItemControllerTest {
     @Test
     public void getItemsByName(){
         Item item = myListOfItems().get(0);
-        when(itemRepository.findByName(item.getName())).thenReturn(List.of(item));
+        List myList = new ArrayList<Item>();
+        myList.add(item);
+        when(itemRepository.findByName(item.getName())).thenReturn(myList);
 
         ResponseEntity<List<Item>> responseEntity = itemController.getItemsByName(item.getName());
         Item returnedItem = responseEntity.getBody().get(0);
@@ -75,8 +78,10 @@ public class ItemControllerTest {
         item1.setId(2L);
         item1.setName("Knife");
         item1.setPrice(new BigDecimal(5));
-
-        return List.of(item, item1);
+        List myList = new ArrayList<Item>();
+        myList.add(item);
+        myList.add(item1);
+        return myList;
     }
 
 }
